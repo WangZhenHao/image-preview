@@ -1,0 +1,38 @@
+{
+  "name": "i-lazy-load",
+  "version": "1.0.4",
+  "description": "a javascript image-preview plugin",
+  "main": "dist/image-preview.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "private": false,
+  "scripts": {
+    "dev": "rollup --config build/rollup.config.dev.js --watch",
+    "build": "node build/rollup.config.prod.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WangZhenHao/image-preview.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WangZhenHao/image-preview/issues"
+  },
+  "homepage": "https://github.com/WangZhenHao/image-preview#readme",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "postcss": "^8.3.6",
+    "rollup": "^1.27.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^4.0.1",
+    "rollup-plugin-scss": "^2.6.1",
+    "rollup-plugin-uglify": "^6.0.3"
+  },
+  "dependencies": {}
+}
