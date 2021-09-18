@@ -1,19 +1,16 @@
-import createSwiper from './createSwiper.js'
+import createSwiper from './createSwiper.js';
 
-function imagePreview() {
+function imagePreview() {}
 
-}
-
-imagePreview.prototype = {
-  open(options) {
-    const index = options.index || 0;
-    const list = options.list || [];
-
+imagePreview.open = function(options) {
+    options.index = options.index ? options.index : 0
+    options.list = options.list ? options.list : []
     
-  },
-  close() {
+    createSwiper(options);
+};
 
-  }
+imagePreview.close = function(options) {
+    
 }
 
 export default imagePreview;

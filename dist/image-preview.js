@@ -4,18 +4,29 @@
     (global = global || self, global.ImagePreview = factory());
 }(this, (function () { 'use strict';
 
+    function createSwiper(options) {
+      var html = createHtml();
+      document.body.appendChild(html);
+    }
+
+    function createHtml(options) {
+      var wrap = document.createElement('div');
+      wrap.className = 'image-preview-wrap';
+      var str = "\n        <div>121212</div>\n    ";
+      wrap.innerHTML = str;
+      return wrap;
+    }
+
     function imagePreview() {}
 
-    imagePreview.prototype = {
-      open: function open(options) {
-        var index = options.index || 0;
-        var list = options.list || [];
-      },
-      close: function close() {}
+    imagePreview.open = function (options) {
+      options.index = options.index ? options.index : 0;
+      options.list = options.list ? options.list : [];
+      createSwiper();
     };
 
-    var instance = new imagePreview();
+    imagePreview.close = function (options) {};
 
-    return instance;
+    return imagePreview;
 
 })));
