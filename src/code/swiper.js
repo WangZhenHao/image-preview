@@ -14,25 +14,18 @@ function Touches(id, config) {
    * @type {Object}
    */
   this.set = {
-    autoPlay: config.autoPlay || false, //是否开启轮播;
     speed: config.speed || 200, //动画执行的时间;
-    interval: config.interval || 3000, //下一张切换时间(毫秒);
     slider_dis: config.slider_dis || 50, //滑动灵敏度;
-    distance: config.distance || 'level', //滑动的方向;
     loop: config.loop || false, //是否开启无限轮播;
-    // pcSlider: config.pcSlider || false, //是否开启pc端点击切换
+    images: config.images || []
   };
+
   this.ContainerId = id;
   //DOM初始化
   this.Init();
   // 触摸事件
-  this.touchEvent();
-  //是否开启轮播
-//   this.autoPlay();
-  // 是否开启pc端点击切换
-//   if (this.set.pcSlider) {
-//     this.pcSlider();
-//   }
+  // this.touchEvent();
+
 }
 Touches.prototype = {
   /**
@@ -43,21 +36,31 @@ Touches.prototype = {
     //总div容器元素
     this.container = document.getElementById(this.ContainerId);
     //图片容器元素
-    this.swiperWrap = this.container.children[0];
-    //li元素数组;
-    this.swiperLi = this.swiperWrap.children;
-    //li个数;
-    this.count = this.swiperLi.length;
-    //指示器容器元素
-    this.pointerWrap = this.container.children[1];
-    //创建指示器li;
-    this.createPointerLi(this.count);
-    //指示器元素li对象
-    this.pointerLi = this.pointerWrap.children;
+    this.createSwiperHTML()
     // 索引
     this.index = 0;
     // this.resize()
-    this.computeWidth('init');
+    // this.computeWidth('init');
+  },
+  createSwiperHTML() {
+    const images = this.set.images;
+    const div = document.createElement('div')
+    div.className = 'swiper-wrap';
+    
+    let str = '';
+
+    for(let i = 0; i < images.length; i++) {
+      str += `
+        <div class="swiper-wrap-item">
+            <div class="swiper-wrap-preview__image">
+                <img class="swiper-wrap__image" src="${images[i]}" />
+            </div>
+        </div>
+      `
+    }
+    div.innerHTML = str;
+
+    this.container.appendChild(div)
   },
 
   /**
@@ -89,37 +92,8 @@ Touches.prototype = {
     }
   },
 
-  /**
-   * 创建图片li
-   *
-   */
-  createLi: function () {
-    var oLi = document.createElement('li');
-    oLi.innerHTML = this.swiperLi[0].innerHTML;
-    this.swiperWrap.appendChild(oLi);
 
-    var oLi = document.createElement('li');
-    oLi.innerHTML = this.swiperLi[this.swiperLi.length - 2].innerHTML;
-    this.swiperWrap.insertBefore(oLi, this.swiperLi[0]);
-  },
 
-  /**
-   * 创建指示器li;
-   * @param  {number} count 图片的数量
-   *
-   */
-  createPointerLi: function (count) {
-    var str = '';
-    for (var i = 0; i < count; i++) {
-      str += '<li data-index="' + i + '"></li>';
-    }
-    //插入指示器li元素
-    try {
-      this.pointerWrap.innerHTML = str;
-    } catch (e) {
-      throw new Error('请加指示器ul元素');
-    }
-  },
 
   /**
    *容器运动函数
@@ -129,16 +103,6 @@ Touches.prototype = {
   translated: function (left, index) {
     this.swiperWrap.style.transform = 'translate3d(' + left + 'px,0,0)';
     this.showPointer(index);
-  },
-  /**
-   *显示指示器
-   * @param index
-   */
-  showPointer: function (index) {
-    for (var i = 0, count = this.pointerLi.length; i < count; i++) {
-      this.pointerLi[i].className = '';
-    }
-    this.pointerLi[index].className = 'active';
   },
   /**
    *触摸事件
@@ -264,40 +228,6 @@ Touches.prototype = {
       this.set.speed
     );
   },
-
-  /**
-   * 检查是否开启自动轮播
-   *
-   */
-//   autoPlay: function () {
-//     if (this.set.autoPlay) {
-//       this.clearAutoPlay();
-//       this.timer = setInterval(
-//         function () {
-//           this.run(1);
-//         }.bind(this),
-//         this.set.interval
-//       );
-//     }
-//   },
-
-  /**
-   * 自动轮播函数
-   * @param  {number } type -1或者1
-   *
-   */
-  run: function (type) {
-    this.index = this.index + type;
-
-    if (!this.set.loop) {
-      this.index = this.index > this.count - 1 ? 0 : this.index;
-      this.index = this.index < 0 ? this.count - 1 : this.index;
-    }
-
-    this.finished();
-  },
-
-
 
   /*-----------------------------------------(不需要可以删除)*/
   /**

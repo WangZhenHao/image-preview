@@ -1,6 +1,6 @@
-import "./swiper.css";
 
-.image-preview-wrap {
+
+.image-preview {
     position: fixed;
     left: 0;
     top: 0;
