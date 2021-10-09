@@ -1,26 +1,23 @@
-.swiper-container { 
+.image-preview { 
     width: 100%; 
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
     position: relative;
   }
-  .swiper-container > .swiper-wrap {
+  .image-preview > .swiper-wrap {
     position: absolute;
     left: 0;
     top: 0;
     transition: transform 0ms linear;
+    height: 100%;
   }
-  .swiper-container > .swiper-wrap > .swiper-wrap-item { 
+  .image-preview > .swiper-wrap > .swiper-wrap-item, .image-preview > .swiper-wrap .swiper-wrap-preview__image { 
     float: left; 
+    height: 100%;
   }
-  .swiper-container > .swiper-wrap > .swiper-wrap-item img {
+  .image-preview > .swiper-wrap > .swiper-wrap-item img {
       display: block;
-      /* background-size: 100% 100%; */
       width: 100%;
-  }
-  .swiper-container > .swiper-wrap > .swiper-wrap-item,
-  .swiper-container > .swiper-wrap,
-  .swiper-container > .swiper-wrap > li > a {
-     width: 100%; 
-     height: 100%; 
+      height: 100%;
+      object-fit: contain;
   }

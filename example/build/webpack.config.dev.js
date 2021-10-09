@@ -4,11 +4,75 @@ const portfinder = require('portfinder');
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+function resove(dir) {
+  return path.join(__dirname, '..', './src', dir);
+}
+
+function multiplePage() {
+  let entry = {},
+    htmlWebpackPlugin = [];
+
+  const pages = [
+    {
+      name: 'demo',
+      template: 'demo/demo.html',
+      entry: 'demo/demo.js'
+    },
+    {
+      name: 'scale',
+      template: 'scale/scale.html',
+      entry: 'scale/scale.js'
+    }
+  ];
+
+  pages.forEach((item, index) => {
+    let name = item.name;
+    entry[name] = resove(item.entry)
+    let catalogue = item.template.split('/');
+    catalogue.pop();
+    
+    htmlWebpackPlugin.push(
+      new HtmlWebpackPlugin({
+        filename: path.join(
+          __dirname,
+          '..',
+          `/dist/${catalogue.join('/')}.html`
+        ),
+        template: resove(item.template),
+        title: '测试',
+        // entry: name,
+        //需要引入的js
+        chunks: [name],
+        minify: {
+          removeComments: false,
+          collapseWhitespace: false,
+          removeAttributeQuotes: false,
+          //压缩html中的js
+          minifyJS: false,
+          //压缩html中的css
+          minifyCSS: false,
+        },
+        // chunksSortMode: 'dependency',
+      })
+    );
+  })
+
+  return {
+    entry,
+    htmlWebpackPlugin
+  }
+}
+
+const pagesDetail = multiplePage()
+// console.log(path.join(__dirname, '../../dist'), __dirname)
 const devWebpackConfig = {
-  mode: 'development',
-  entry: {
-      app: path.resolve(__dirname, '../main.js')
+  resolve: {
+    alias: {
+      '@imagePreview': path.join(__dirname, '../../dist')
+    },
   },
+  mode: 'development',
+  entry: pagesDetail.entry,
   output: {
     filename: '[name].js',
     publicPath: '/',
@@ -27,15 +91,17 @@ const devWebpackConfig = {
     port: '8081',
   },
   module: {
-   
+    rules: [
+      {
+          test: /\.(c|sc)ss$/,
+          use: ['style-loader', 'css-loader'],
+      },
+    ]
   },
   plugins: [
     //启用热替换模块(Hot Module Replacement)，也被称为 HMR。
     new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: path.resolve(__dirname, '../scale.html')
-    })
+    ...pagesDetail.htmlWebpackPlugin
   ],
 };
 

@@ -39,6 +39,7 @@
 //   event.stopPropagation();
 // }
 
+
 // function preventDefault(event, isStopPropagation) {
 //   /* istanbul ignore else */
 //   if (typeof event.cancelable !== 'boolean' || event.cancelable) {
@@ -164,6 +165,8 @@ var move = {
     moveX: 0,
     moveY: 0
 }
+
+var newScale
 // var moving = false;
 // 缩放处理
 eleImg.addEventListener('touchstart', function (event) {
@@ -243,6 +246,7 @@ document.addEventListener('touchmove', function (event) {
         });
 
         newScale = store.originScale * zoom;
+        console.log(newScale)
         // 最大缩放比例限制
         if (newScale > 3) {
             newScale = 3;

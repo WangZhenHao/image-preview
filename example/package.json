@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --inline --progress --config ./build/webpack.config.dev.js",
+    "build": "webpack --config ./build/webpack.config.prod.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -13,7 +14,9 @@
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "portfinder": "^1.0.20"
+    "portfinder": "^1.0.20",
+    "style-loader": "^0.23.1",
+    "css-loader": "^2.1.1"
   },
   "keywords": [],
   "author": "",

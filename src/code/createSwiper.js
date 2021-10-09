@@ -1,18 +1,17 @@
 import Touches from './swiper'
+const imagePreveiwId = 'imagePreveiw'
 
 function createSwiper(options) {
     const html = createHtml(options);
     document.body.appendChild(html);
 
-    const slider = new Touches('imagePreveiw', {
-        images: options.list
-    });
+    const slider = new Touches(imagePreveiwId, options);
 }
 
 function createHtml(options) {
     const wrap = document.createElement('div');
     wrap.className = 'image-preview'
-    wrap.id = 'imagePreview'
+    wrap.id = imagePreveiwId
 
     // let str = ``
 

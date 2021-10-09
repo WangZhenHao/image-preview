@@ -1,13 +1,9 @@
-/*
-     使用方法
-     id:轮播容器的id;
-     json: 各种配置参数json格式;
-     var demo = new Touches('swiper',{
-     autoPlay:true,
-     interval:4000
-     });
- */
 
+function getNum(str) {
+  var re = /\d+/g;
+  var arr = str.match(re);
+  return arr
+}
 function Touches(id, config) {
   /**
    * 初始化配置
@@ -17,30 +13,27 @@ function Touches(id, config) {
     speed: config.speed || 200, //动画执行的时间;
     slider_dis: config.slider_dis || 50, //滑动灵敏度;
     loop: config.loop || false, //是否开启无限轮播;
-    images: config.images || []
+    images: config.list || [],
   };
 
-  this.ContainerId = id;
+  this.index = config.index || 0
+  this.containerId = id;
   //DOM初始化
-  this.Init();
-  // 触摸事件
-  // this.touchEvent();
+  this.init();
 
 }
 Touches.prototype = {
-  /**
-   *
-   * @constructor
-   */
-  Init: function () {
-    //总div容器元素
-    this.container = document.getElementById(this.ContainerId);
-    //图片容器元素
-    this.createSwiperHTML()
-    // 索引
-    this.index = 0;
-    // this.resize()
-    // this.computeWidth('init');
+  init: function () {
+    // 总div容器元素
+    this.container = document.getElementById(this.containerId);
+    // 图片容器元素
+    this.createSwiperHTML();
+    // 计算容器高度
+    this.computeWidth();
+    // 事件委托
+    this.touchEvent();
+
+    this.sliderIndex(this.index)
   },
   createSwiperHTML() {
     const images = this.set.images;
@@ -58,8 +51,8 @@ Touches.prototype = {
         </div>
       `
     }
-    div.innerHTML = str;
 
+    div.innerHTML = str;
     this.container.appendChild(div)
   },
 
@@ -67,42 +60,27 @@ Touches.prototype = {
    * 计算容器的宽度
    *
    */
-  computeWidth: function (type) {
-    //获取容器的宽度
-    this.w = this.container.offsetWidth;
-    if (type == 'init') {
-      if (this.set.loop) {
-        //是否循环轮播
-        this.loopIndex = this.count + 2;
-        this.createLi();
-        this.translated(-this.w * (this.index + 1), this.index);
-      } else {
-        this.loopIndex = this.count;
-        this.translated(-this.w * this.index, this.index);
-      }
-    } else {
-      this.translated(-this.w * this.index, this.index);
-    }
+  computeWidth: function () {
+    const h = this.container.offsetHeight;  
+    this.w = this.container.offsetWidth;    
+    this.swiperWrap = this.container.getElementsByClassName('swiper-wrap')[0];
+    this.swiperLis = this.swiperWrap.getElementsByClassName('swiper-wrap-item');
+    this.loopCount = this.swiperLis.length;
 
-    this.swiperWrap.style.width = this.w * this.loopIndex + 'px';
+    this.swiperWrap.style.width = this.w * this.loopCount + 'px';
 
     // 配置每张图片宽度
-    for (var i = 0; i < this.loopIndex; i++) {
-      this.swiperLi[i].style.width = this.w + 'px';
+    for (var i = 0; i < this.loopCount; i++) {
+      this.swiperLis[i].style.width = this.w + 'px';
     }
   },
-
-
-
-
   /**
    *容器运动函数
    * @param left
    * @param index
    */
-  translated: function (left, index) {
+  translated: function (left) {
     this.swiperWrap.style.transform = 'translate3d(' + left + 'px,0,0)';
-    this.showPointer(index);
   },
   /**
    *触摸事件
@@ -155,10 +133,7 @@ Touches.prototype = {
      * @param  {string} str 传入字符串
      * @return {number}     返回图片容器的偏移数值
      */
-    function getNum(str) {
-      var re = /\d+/g;
-      return str.match(re);
-    }
+    
     // 执行事件
     this.swiperWrap.addEventListener('touchstart', this.Tstart);
     this.swiperWrap.addEventListener('touchmove', this.Tmove);
@@ -186,63 +161,23 @@ Touches.prototype = {
      * @param  {[type]} this.set.loop [description]
      * @return {[type]}               [description]
      */
-    if (this.set.loop) {
-      this.loop();
-    } else {
-      if (this.index < 0) {
-        this.index = 0;
-      } else if (this.index > this.count - 1) {
-        this.index = this.count - 1;
-      }
-      this.translated(-this.index * this.w, this.index);
-    }
-  },
-
-  /**
-   * 无限循环轮播执行函数
-   * @return {[type]} [description]
-   */
-  loop: function () {
-    if (this.index >= this.count) {
-      this.translated(-(this.index + 1) * this.w, 0);
+    if (this.index < 0) {
       this.index = 0;
-      this.animateFinish();
-    } else if (this.index < 0) {
-      this.translated(0, this.count - 1);
-      this.index = this.count - 1;
-      this.animateFinish();
-    } else {
-      this.translated(-(this.index + 1) * this.w, this.index);
+    } else if (this.index > this.loopCount - 1) {
+      this.index = this.loopCount - 1;
     }
-  },
-  /**
-   * 动画执行完毕
-   *
-   */
-  animateFinish: function () {
-    setTimeout(
-      function () {
-        this.swiperWrap.style.transitionDuration = 0 + 'ms';
-        this.translated(-this.w * (this.index + 1), this.index);
-      }.bind(this),
-      this.set.speed
-    );
+    this.translated(-this.index * this.w, this.index);
   },
 
-  /*-----------------------------------------(不需要可以删除)*/
   /**
    * 初始化幻灯片位置从0开始
    * @param  {number} index 幻灯片位置
    *
    */
   sliderIndex: function (index) {
-    var count = this.set.loop == true ? index + 1 : index;
-    this.translated(-this.w * count, index);
+    this.translated(-this.w * index);
     this.index = index;
   },
-  /*初始化幻灯片位置从0开始-----------------------------------------(不需要可以删除)*/
-
-  
 };
 
 export default Touches;
