@@ -25,9 +25,9 @@ scaleImage.prototype = {
 
         }
 
-        document.addEventListener('touchstart', this.documnetTouchStart)
-        document.addEventListener('touchstart', this.documnetTouchMove)
-        document.addEventListener('touchstart', this.documnetTouchEnd)
+        document.addEventListener('touchstart', this.documnetTouchStart, { passive: false })
+        document.addEventListener('touchstart', this.documnetTouchMove, { passive: false })
+        document.addEventListener('touchstart', this.documnetTouchEnd, { passive: false })
     }
 }
 
