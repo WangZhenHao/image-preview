@@ -1,3 +1,5 @@
+import scaleImage from "./scaleImage";
+
 
 function getNum(str) {
   var re = /\d+/g;
@@ -20,7 +22,7 @@ function Touches(id, config) {
   this.containerId = id;
   //DOM初始化
   this.init();
-
+  
 }
 Touches.prototype = {
   init: function () {
@@ -34,6 +36,8 @@ Touches.prototype = {
     this.touchEvent();
 
     this.sliderIndex(this.index)
+
+    new scaleImage(this)
   },
   createSwiperHTML() {
     const images = this.set.images;
