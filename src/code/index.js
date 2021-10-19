@@ -1,5 +1,5 @@
-import '../css/swiper.css'
-import '../css/index.css'
+// import '../css/swiper.css'
+// import '../css/index.css'
 
 import createSwiper from './createSwiper.js';
 

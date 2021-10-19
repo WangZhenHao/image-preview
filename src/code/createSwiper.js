@@ -1,11 +1,14 @@
-import Touches from './swiper'
+import Swiper from './swiper'
+import ScaleImage from './scaleImage';
+
 const imagePreveiwId = 'imagePreveiw'
 
 function createSwiper(options) {
     const html = createHtml(options);
     document.body.appendChild(html);
 
-    const slider = new Touches(imagePreveiwId, options);
+    const slider = new Swiper(imagePreveiwId, options);
+    new ScaleImage(slider)
 }
 
 function createHtml(options) {

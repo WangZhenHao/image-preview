@@ -69,6 +69,7 @@ const devWebpackConfig = {
   resolve: {
     alias: {
       '@imagePreview': path.join(__dirname, '../../dist')
+      // '@imagePreview': path.join(__dirname, '../../src')
     },
   },
   mode: 'development',

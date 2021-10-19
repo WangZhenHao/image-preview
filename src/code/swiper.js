@@ -1,4 +1,4 @@
-import scaleImage from "./scaleImage";
+// import scaleImage from "./scaleImage";
 
 
 function getNum(str) {
@@ -20,6 +20,7 @@ function Touches(id, config) {
 
   this.index = config.index || 0
   this.containerId = id;
+  this.swiperLis = []
   //DOM初始化
   this.init();
   
@@ -37,7 +38,7 @@ Touches.prototype = {
 
     this.sliderIndex(this.index)
 
-    new scaleImage(this)
+    
   },
   createSwiperHTML() {
     const images = this.set.images;
@@ -99,6 +100,8 @@ Touches.prototype = {
      *
      */
     this.Tstart = function (e) {
+      if(_this.swiperDisable) return
+
       var e = e || event;
       var touch = e.targetTouches[0];
       _this.start = { x: touch.pageX };
@@ -110,6 +113,8 @@ Touches.prototype = {
      *
      */
     this.Tmove = function (e) {
+      if(_this.swiperDisable) return
+
       var e = e || event,
         touch = e.targetTouches[0];
       e.preventDefault();
@@ -123,6 +128,8 @@ Touches.prototype = {
      * 触摸结束
      */
     this.Tend = function () {
+      if(_this.swiperDisable) return
+
       if (_this.end.x < -_this.set.slider_dis) {
         _this.index++;
       } else if (_this.end.x > _this.set.slider_dis) {
@@ -182,6 +189,12 @@ Touches.prototype = {
     this.translated(-this.w * index);
     this.index = index;
   },
+  disable() {
+    this.swiperDisable = true;
+  },
+  enable() {
+    this.swiperDisable = false;
+  }
 };
 
 export default Touches;
