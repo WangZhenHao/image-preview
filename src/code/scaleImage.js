@@ -22,13 +22,14 @@ function scaleImage(swiper) {
 scaleImage.prototype = {
     documentEvent: function() {
         // const self = this;
+        this._dblclick = 0
 
         this.documnetTouchStart = (event) => {
             // console.log(event.touches)
             var touches = event.touches;
             var events = touches[0];
             var events2 = touches[1];
-            event.preventDefault();
+            // event.preventDefault();
             
             this.store.pageX = events.pageX;
             this.store.pageY = events.pageY;
@@ -105,20 +106,22 @@ scaleImage.prototype = {
             }
 
             if(this.move.moveing) {
+                event.preventDefault();
                 const deltaX = events.clientX - this.move.startX;
                 const deltaY = events.clientY - this.move.startY;
 
                 const moveX = deltaX + this.move.startMoveX;
                 const moveY = deltaY + this.move.startMoveY;
-                const distance = this.maxMoveX();
-
-                console.log( this.store.scale, moveX, distance, '----------------->', range(moveX, -distance, distance))
-                this.move.moveX = range(moveX, -distance, distance);
-                this.move.moveY = moveY;
+                const distanceX = this.maxMoveX();
+                const distanceY = this.maxMoveY();
+                // console.log(this.store.scale, moveX, distance, '----------------->', range(moveX, -distance, distance))
+                // console.log(distanceY)
+                this.move.moveX = range(moveX, -distanceX, distanceX);
+                this.move.moveY = range(moveY, -distanceY, distanceY);;
                 this.imageScale();
             }
 
-            event.preventDefault();
+            // event.preventDefault();
         }
 
         this.documnetTouchEnd = (event) => {
@@ -129,29 +132,80 @@ scaleImage.prototype = {
             }
 
             this.move.moveing = false;
+            this.move.moveable = false;
+        }
+
+        this.documentDblClick = (event) => {
+            this._dblclick++;
+            
+            setTimeout(() => {
+                this._dblclick = 0;
+            }, 500)
+
+            if(this._dblclick > 1) {
+                this.store.scale = this.store.scale === 1 ? 3 : 1;
+                this.move.moveX = 0;
+                this.move.moveY = 0;
+                
+                this.imageScale();
+            }
         }
 
         document.addEventListener('touchstart', this.documnetTouchStart, { passive: false })
         document.addEventListener('touchmove', this.documnetTouchMove, { passive: false })
         document.addEventListener('touchend', this.documnetTouchEnd, { passive: false })
+        document.addEventListener('click', this.documentDblClick)
+
+        // const { index, swiperLis } = this.swiper;
+        // const image = swiperLis[index].querySelector('img')
+
+        // image.onclick = function() {
+        //     alert(1)
+        // }
     },
     imageScale() {
         const { index, swiperLis } = this.swiper;
+        const scale = this.store.scale;
+
+        if (scale !== 1) { 
+            const offsetX = this.move.moveX / scale;
+            const offsetY = this.move.moveY / scale;
+
+            console.log(offsetY)
+            const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
+            image.style.transform = `scale(${scale}, ${scale}) translate(${offsetX}px, ${offsetY}px)`;
+        }
+       
         
-        const image = swiperLis[index].querySelector('img')
-        image.style.transform = `scale(${this.store.scale}, ${this.store.scale}) translate(${this.move.moveX}px, ${this.move.moveY}px)`;
         // alert(window.innerWidth)
     },
     maxMoveX() {
         let maxMoveX = 0;
         const { index, swiperLis } = this.swiper;
-        const image = swiperLis[index].querySelector('img')
+        const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
         const width = image.offsetWidth;
 
-        maxMoveX = (window.innerWidth * this.store.scale - window.innerWidth) / 2
-
+        if(width * this.store.scale > window.innerWidth) {
+            maxMoveX = (width * this.store.scale - window.innerWidth) / 2
+            maxMoveX = Math.max(0, maxMoveX)
+        }
+        
 
         return maxMoveX;
+    },
+    maxMoveY() {
+        let maxMoveY = 0;
+        const { index, swiperLis } = this.swiper;
+        const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
+        const height = image.offsetHeight;
+        
+        console.log(height * this.store.scale > window.innerHeight)
+        if(height * this.store.scale > window.innerHeight) {
+            maxMoveY = (height * this.store.scale - window.innerHeight) / 2
+            maxMoveY = Math.max(0, maxMoveY)
+        }
+        
+        return maxMoveY
     }
 }
 

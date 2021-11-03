@@ -19,6 +19,7 @@ function Touches(id, config) {
   };
 
   this.index = config.index || 0
+  this._swiperDisable = false;
   this.containerId = id;
   this.swiperLis = []
   //DOM初始化
@@ -27,6 +28,12 @@ function Touches(id, config) {
 }
 Touches.prototype = {
   init: function () {
+
+    if(this.set.images.length === 1) {
+      this.index = 0;
+      this._swiperDisable = true;
+    }
+
     // 总div容器元素
     this.container = document.getElementById(this.containerId);
     // 图片容器元素
@@ -193,7 +200,11 @@ Touches.prototype = {
     this.swiperDisable = true;
   },
   enable() {
-    this.swiperDisable = false;
+    if(this._swiperDisable) {
+      this.swiperDisable = true;
+    } else {
+      this.swiperDisable = false;
+    }
   }
 };
 

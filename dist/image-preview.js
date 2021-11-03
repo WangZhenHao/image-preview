@@ -26,6 +26,7 @@
       images: config.list || []
     };
     this.index = config.index || 0;
+    this._swiperDisable = false;
     this.containerId = id;
     this.swiperLis = []; //DOM初始化
 
@@ -34,7 +35,12 @@
 
   Touches.prototype = {
     init: function init() {
-      // 总div容器元素
+      if (this.set.images.length === 1) {
+        this.index = 0;
+        this._swiperDisable = true;
+      } // 总div容器元素
+
+
       this.container = document.getElementById(this.containerId); // 图片容器元素
 
       this.createSwiperHTML(); // 计算容器高度
@@ -203,7 +209,11 @@
       this.swiperDisable = true;
     },
     enable: function enable() {
-      this.swiperDisable = false;
+      if (this._swiperDisable) {
+        this.swiperDisable = true;
+      } else {
+        this.swiperDisable = false;
+      }
     }
   };
 
@@ -237,12 +247,14 @@
       var _this = this;
 
       // const self = this;
+      this._dblclick = 0;
+
       this.documnetTouchStart = function (event) {
         // console.log(event.touches)
         var touches = event.touches;
         var events = touches[0];
-        var events2 = touches[1];
-        event.preventDefault();
+        var events2 = touches[1]; // event.preventDefault();
+
         _this.store.pageX = events.pageX;
         _this.store.pageY = events.pageY;
         _this.move.moveable = true;
@@ -319,16 +331,18 @@
           var moveX = deltaX + _this.move.startMoveX;
           var moveY = deltaY + _this.move.startMoveY;
 
-          var distance = _this.maxMoveX();
+          var distanceX = _this.maxMoveX();
 
-          console.log(_this.store.scale, moveX, distance, '----------------->', range(moveX, -distance, distance));
-          _this.move.moveX = range(moveX, -distance, distance);
-          _this.move.moveY = moveY;
+          var distanceY = _this.maxMoveY(); // console.log(this.store.scale, moveX, distance, '----------------->', range(moveX, -distance, distance))
+          // console.log(distanceY)
+
+
+          _this.move.moveX = range(moveX, -distanceX, distanceX);
+          _this.move.moveY = range(moveY, -distanceY, distanceY);
 
           _this.imageScale();
-        }
+        } // event.preventDefault();
 
-        event.preventDefault();
       };
 
       this.documnetTouchEnd = function (event) {
@@ -339,6 +353,22 @@
         }
 
         _this.move.moveing = false;
+        _this.move.moveable = false;
+      };
+
+      this.documentDblClick = function (event) {
+        _this._dblclick++;
+        setTimeout(function () {
+          _this._dblclick = 0;
+        }, 500);
+
+        if (_this._dblclick > 1) {
+          _this.store.scale = _this.store.scale === 1 ? 3 : 1;
+          _this.move.moveX = 0;
+          _this.move.moveY = 0;
+
+          _this.imageScale();
+        }
       };
 
       document.addEventListener('touchstart', this.documnetTouchStart, {
@@ -350,23 +380,57 @@
       document.addEventListener('touchend', this.documnetTouchEnd, {
         passive: false
       });
+      document.addEventListener('click', this.documentDblClick); // const { index, swiperLis } = this.swiper;
+      // const image = swiperLis[index].querySelector('img')
+      // image.onclick = function() {
+      //     alert(1)
+      // }
     },
     imageScale: function imageScale() {
       var _this$swiper = this.swiper,
           index = _this$swiper.index,
           swiperLis = _this$swiper.swiperLis;
-      var image = swiperLis[index].querySelector('img');
-      image.style.transform = "scale(".concat(this.store.scale, ", ").concat(this.store.scale, ") translate(").concat(this.move.moveX, "px, ").concat(this.move.moveY, "px)"); // alert(window.innerWidth)
+      var scale = this.store.scale;
+
+      if (scale !== 1) {
+        var offsetX = this.move.moveX / scale;
+        var offsetY = this.move.moveY / scale;
+        console.log(offsetY);
+        var image = swiperLis[index].querySelector('.swiper-wrap-preview__image');
+        image.style.transform = "scale(".concat(scale, ", ").concat(scale, ") translate(").concat(offsetX, "px, ").concat(offsetY, "px)");
+      } // alert(window.innerWidth)
+
     },
     maxMoveX: function maxMoveX() {
       var maxMoveX = 0;
       var _this$swiper2 = this.swiper,
           index = _this$swiper2.index,
           swiperLis = _this$swiper2.swiperLis;
-      var image = swiperLis[index].querySelector('img');
+      var image = swiperLis[index].querySelector('.swiper-wrap-preview__image');
       var width = image.offsetWidth;
-      maxMoveX = (window.innerWidth * this.store.scale - window.innerWidth) / 2;
+
+      if (width * this.store.scale > window.innerWidth) {
+        maxMoveX = (width * this.store.scale - window.innerWidth) / 2;
+        maxMoveX = Math.max(0, maxMoveX);
+      }
+
       return maxMoveX;
+    },
+    maxMoveY: function maxMoveY() {
+      var maxMoveY = 0;
+      var _this$swiper3 = this.swiper,
+          index = _this$swiper3.index,
+          swiperLis = _this$swiper3.swiperLis;
+      var image = swiperLis[index].querySelector('.swiper-wrap-preview__image');
+      var height = image.offsetHeight;
+      console.log(height * this.store.scale > window.innerHeight);
+
+      if (height * this.store.scale > window.innerHeight) {
+        maxMoveY = (height * this.store.scale - window.innerHeight) / 2;
+        maxMoveY = Math.max(0, maxMoveY);
+      }
+
+      return maxMoveY;
     }
   };
 
