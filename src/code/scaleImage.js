@@ -49,6 +49,7 @@ scaleImage.prototype = {
 
             this.store.originScale = this.store.scale || 1;
 
+            this.imgageSacaleAnimate(false)
             this.imageScale();
         }
 
@@ -96,9 +97,9 @@ scaleImage.prototype = {
                     newScale = 3;
                 }
 
-                if(newScale < 1) {
-                    newScale = 1;
-                }
+                // if(newScale < 1) {
+                //     newScale = 1;
+                // }
 
                 this.store.scale = newScale;
 
@@ -112,12 +113,14 @@ scaleImage.prototype = {
 
                 const moveX = deltaX + this.move.startMoveX;
                 const moveY = deltaY + this.move.startMoveY;
-                const distanceX = this.maxMoveX();
-                const distanceY = this.maxMoveY();
+                this.distanceX = this.maxMoveX();
+                this.distanceY = this.maxMoveY();
                 // console.log(this.store.scale, moveX, distance, '----------------->', range(moveX, -distance, distance))
                 // console.log(distanceY)
-                this.move.moveX = range(moveX, -distanceX, distanceX);
-                this.move.moveY = range(moveY, -distanceY, distanceY);;
+                this.move.moveX = range(moveX, -this.distanceX, this.distanceX);
+                this.move.moveY = range(moveY, -this.distanceY, this.distanceY);
+
+                this.imgageSacaleAnimate(false)
                 this.imageScale();
             }
 
@@ -125,14 +128,37 @@ scaleImage.prototype = {
         }
 
         this.documnetTouchEnd = (event) => {
+            console.log('触摸结束')
+            
+            if(this.store.scale < 1) {
+                this.store.scale = 1
+            }
+
             if(this.store.scale === 1) {
                 this.swiper.enable()
-            } else {
+            }else {
                 this.swiper.disable();
+            }
+            
+            if(!event.touches.length) {
+                // event.preventDefault();
+                this.distanceX = this.maxMoveX();
+                this.distanceY = this.maxMoveY();
+
+                this.move.moveX = range(this.move.moveX, -this.distanceX, this.distanceX);
+                this.move.moveY = range(this.move.moveY, -this.distanceY, this.distanceY);
+                this.imgageSacaleAnimate(true)
+                this.imageScale();
             }
 
             this.move.moveing = false;
             this.move.moveable = false;
+
+            // this.move.moveX = range(this.move.moveX, -this.distanceX, this.distanceX);
+            // this.move.moveY = range(this.move.moveX, -this.distanceY, this.distanceY);
+
+            // this.imgageSacaleAnimate(true)
+            // this.imageScale();
         }
 
         this.documentDblClick = (event) => {
@@ -143,10 +169,13 @@ scaleImage.prototype = {
             }, 500)
 
             if(this._dblclick > 1) {
-                this.store.scale = this.store.scale === 1 ? 3 : 1;
+                // debugger
+                console.log('双击结束')
+                this.store.scale = this.store.scale === 3 ? 1 : 3;
                 this.move.moveX = 0;
                 this.move.moveY = 0;
                 
+                this.imgageSacaleAnimate(true)
                 this.imageScale();
             }
         }
@@ -167,17 +196,27 @@ scaleImage.prototype = {
         const { index, swiperLis } = this.swiper;
         const scale = this.store.scale;
 
-        if (scale !== 1) { 
+        // if (scale !== 1) { 
             const offsetX = this.move.moveX / scale;
             const offsetY = this.move.moveY / scale;
 
-            console.log(offsetY)
             const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
             image.style.transform = `scale(${scale}, ${scale}) translate(${offsetX}px, ${offsetY}px)`;
-        }
+        // }
        
         
         // alert(window.innerWidth)
+    },
+    imgageSacaleAnimate(type) {
+        const { index, swiperLis } = this.swiper;
+        const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
+
+        if(type) {
+            image.style['transitionDuration'] = '.3s'
+        } else {
+            image.style['transitionDuration'] = '0s'
+            // console.log(image.style['transitionDuration'])
+        }
     },
     maxMoveX() {
         let maxMoveX = 0;
@@ -199,7 +238,7 @@ scaleImage.prototype = {
         const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
         const height = image.offsetHeight;
         
-        console.log(height * this.store.scale > window.innerHeight)
+        // console.log(height * this.store.scale > window.innerHeight)
         if(height * this.store.scale > window.innerHeight) {
             maxMoveY = (height * this.store.scale - window.innerHeight) / 2
             maxMoveY = Math.max(0, maxMoveY)

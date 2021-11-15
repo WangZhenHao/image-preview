@@ -14,7 +14,6 @@ function Touches(id, config) {
   this.set = {
     speed: config.speed || 200, //动画执行的时间;
     slider_dis: config.slider_dis || 50, //滑动灵敏度;
-    loop: config.loop || false, //是否开启无限轮播;
     images: config.list || [],
   };
 
