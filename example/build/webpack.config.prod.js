@@ -66,9 +66,15 @@ function multiplePage() {
 const pagesDetail = multiplePage()
 // console.log(path.join(__dirname, '../../dist'), __dirname)
 const devWebpackConfig = {
+  // resolve: {
+  //   alias: {
+  //     '@imagePreview': path.join(__dirname, '../../dist')
+  //   },
+  // },
   resolve: {
     alias: {
-      '@imagePreview': path.join(__dirname, '../../dist')
+      '@imagePreview': path.join(__dirname, '../../src')
+      // '@imagePreview': path.join(__dirname, '../../src')
     },
   },
   mode: 'production',

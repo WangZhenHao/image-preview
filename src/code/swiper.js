@@ -25,6 +25,10 @@ function Touches(id, config) {
   this.init();
   
 }
+
+const  verticalClass = 'swiper-wrap-preview__image--vertical'
+const  hideClass = 'swiper-wrap-preview__hide'
+
 Touches.prototype = {
   init: function () {
 
@@ -56,17 +60,43 @@ Touches.prototype = {
     for(let i = 0; i < images.length; i++) {
       str += `
         <div class="swiper-wrap-item">
-            <div class="swiper-wrap-preview__image">
+            <div class="swiper-wrap-preview__image ${hideClass}">
                 <img class="swiper-wrap__image" src="${images[i]}" />
+                <div class="loading swiper-wrap__image--loading"></div>
             </div>
         </div>
       `
     }
 
     div.innerHTML = str;
-    this.container.appendChild(div)
-  },
+    this.container.appendChild(div);
 
+    this.imageLoad()
+  },
+  imageLoad() {
+    const imageList = this.container.getElementsByClassName('swiper-wrap__image');
+    // console.log(imageList instanceof Array)
+    for(var i = 0; i < imageList.length; i++) {
+      imageList[i].onload = function(event) {
+        const { naturalWidth, naturalHeight } = event.target;
+        const parentNode = event.target.parentNode
+
+        const vertical = (naturalHeight / naturalWidth) > (window.innerHeight / window.innerWidth);
+
+        if(vertical) {
+          parentNode.classList.add(verticalClass)
+        }
+
+        parentNode.classList.remove(hideClass)
+        parentNode.removeChild(event.target.nextElementSibling)
+      }
+    }
+    // imageList.forEach(item => {
+    //   item.onLoad = function(event) {
+    //     console.log(event)
+    //   }
+    // })
+  },
   /**
    * 计算容器的宽度
    *

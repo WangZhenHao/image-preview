@@ -1,4 +1,5 @@
 import { range, getDistance } from '../uitls'
+const MAXSCALENUM  = 5;
 
 function scaleImage(swiper) {
     this.swiper = swiper;
@@ -93,8 +94,8 @@ scaleImage.prototype = {
 
                 let newScale = this.store.originScale * zoom;
 
-                if(newScale > 3) {
-                    newScale = 3;
+                if(newScale > MAXSCALENUM) {
+                    newScale = MAXSCALENUM;
                 }
 
                 // if(newScale < 1) {
@@ -169,9 +170,7 @@ scaleImage.prototype = {
             }, 500)
 
             if(this._dblclick > 1) {
-                // debugger
-                console.log('双击结束')
-                this.store.scale = this.store.scale === 3 ? 1 : 3;
+                this.store.scale = this.store.scale === MAXSCALENUM ? 1 : MAXSCALENUM;
                 this.move.moveX = 0;
                 this.move.moveY = 0;
                 
@@ -185,12 +184,6 @@ scaleImage.prototype = {
         document.addEventListener('touchend', this.documnetTouchEnd, { passive: false })
         document.addEventListener('click', this.documentDblClick)
 
-        // const { index, swiperLis } = this.swiper;
-        // const image = swiperLis[index].querySelector('img')
-
-        // image.onclick = function() {
-        //     alert(1)
-        // }
     },
     imageScale() {
         const { index, swiperLis } = this.swiper;
@@ -224,12 +217,14 @@ scaleImage.prototype = {
         const image = swiperLis[index].querySelector('.swiper-wrap-preview__image')
         const width = image.offsetWidth;
 
-        if(width * this.store.scale > window.innerWidth) {
+        if(image.offsetHeight === window.innerHeight) {
+            maxMoveX = 0
+        } else if(width * this.store.scale > window.innerWidth) {
             maxMoveX = (width * this.store.scale - window.innerWidth) / 2
             maxMoveX = Math.max(0, maxMoveX)
         }
         
-
+        console.log(maxMoveX);
         return maxMoveX;
     },
     maxMoveY() {
