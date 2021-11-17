@@ -6,8 +6,8 @@
 
 ```
 引入：
-     dist/image-preview.css  
-     dist/image-preview.js
+     dist/image-preview.min.css  
+     dist/image-preview.min.js
 
 
 显示：
