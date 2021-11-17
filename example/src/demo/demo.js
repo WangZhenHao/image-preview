@@ -4,7 +4,7 @@ import VConsole from 'vconsole';
 
 // const vConsole = new VConsole();
 
-const showBtn = document.querySelector('showBtn')
+const showBtn = document.querySelector('#showBtn')
 
 showBtn.onclick = function() {
   imagePrevew.open({

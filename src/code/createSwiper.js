@@ -7,8 +7,10 @@ function createSwiper(options) {
     const html = createHtml(options);
     document.body.appendChild(html);
 
-    const slider = new Swiper(imagePreveiwId, options);
-    new ScaleImage(slider)
+    const sliderInstence = new Swiper(imagePreveiwId, options);
+    const scaleImageInstence =  new ScaleImage(sliderInstence)
+
+    return scaleImageInstence;
 }
 
 function createHtml(options) {

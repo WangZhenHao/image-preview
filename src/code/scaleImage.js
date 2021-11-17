@@ -108,7 +108,7 @@ scaleImage.prototype = {
             }
 
             if(this.move.moveing) {
-                event.preventDefault();
+                
                 const deltaX = events.clientX - this.move.startX;
                 const deltaY = events.clientY - this.move.startY;
 
@@ -123,9 +123,11 @@ scaleImage.prototype = {
 
                 this.imgageSacaleAnimate(false)
                 this.imageScale();
+
+                // event.preventDefault();
             }
 
-            // event.preventDefault();
+            event.preventDefault();
         }
 
         this.documnetTouchEnd = (event) => {
@@ -176,14 +178,36 @@ scaleImage.prototype = {
                 
                 this.imgageSacaleAnimate(true)
                 this.imageScale();
+
+                if(this.store.scale === 1) {
+                    this.swiper.enable()
+                }else {
+                    this.swiper.disable();
+                }
             }
+
+            setTimeout(() => {
+                if(this._dblclick === 1) {
+                    this.open && this.close()
+                }
+            }, 300);
+            
         }
 
         document.addEventListener('touchstart', this.documnetTouchStart, { passive: false })
         document.addEventListener('touchmove', this.documnetTouchMove, { passive: false })
         document.addEventListener('touchend', this.documnetTouchEnd, { passive: false })
-        document.addEventListener('click', this.documentDblClick)
+        this.swiper.container.addEventListener('click', this.documentDblClick)
 
+    },
+    close() {
+        this.open = false;
+        document.removeEventListener('touchstart', this.documnetTouchStart)
+        document.removeEventListener('touchmove', this.documnetTouchMove)
+        document.removeEventListener('touchend', this.touchend)
+        this.swiper.container.removeEventListener('click', this.documentDblClick)
+
+        this.swiper.destrory();
     },
     imageScale() {
         const { index, swiperLis } = this.swiper;

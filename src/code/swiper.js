@@ -186,7 +186,14 @@ Touches.prototype = {
     this.swiperWrap.addEventListener('touchmove', this.Tmove);
     this.swiperWrap.addEventListener('touchend', this.Tend);
   },
+  destrory() {
+    this.swiperWrap.removeEventListener('touchstart', this.Tstart);
+    this.swiperWrap.removeEventListener('touchmove', this.Tmove);
+    this.swiperWrap.removeEventListener('touchend', this.Tend);
 
+    const imagePreveiw = document.querySelector('#imagePreveiw');
+    imagePreveiw.parentNode.removeChild(imagePreveiw);
+  },
   /**
    * 清除自动轮播计时器
    *
