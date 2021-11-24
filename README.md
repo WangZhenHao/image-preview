@@ -26,7 +26,7 @@ imagePrevew.open({}) 参数说明
 list                   array               图片列表（默认： []）            如：['xxx', 'xxx']
 index                  number              显示第几张图片（默认：0）         如： 1
 ```
-### 手机预览：
+### 手机预览：[https://wangzhenhao.github.io/image-preview/example/dist/demo.html](https://wangzhenhao.github.io/image-preview/example/dist/demo.html)
 ![4](https://github.com/WangZhenHao/image-preview/blob/master/example/image/4.png)
 
 
